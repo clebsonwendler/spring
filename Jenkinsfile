@@ -36,7 +36,7 @@ pipeline{
             //when { branch 'develop' }
             steps{
                 script{
-                    if(env.BRANCH_NAME == 'develop'){
+                    if(env.BRANCH_NAME == 'main'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
                             sh './mvnw -P${profile} clean verify -DskipTests sonar:sonar'
                         }
