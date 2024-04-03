@@ -33,16 +33,17 @@ pipeline{
         }
 
         stage("SonarQube Analysis"){
+            when { branch 'master' }
             steps{
                 script{
                     withSonarQubeEnv(credentialsId: 'sonarqube') {
 
                         if (env.BRANCH_NAME == 'main') {
-                            profile = 'prod'
+                            def profile = 'prod'
                         } else if (env.BRANCH_NAME == 'staging'){
-                            profile = 'stg'
+                            def profile = 'stg'
                         } else if (env.BRANCH_NAME == 'develop'){
-                            profile = 'dev'
+                            def profile = 'dev'
                         }
 
                         sh 'echo $profile'
@@ -53,123 +54,123 @@ pipeline{
             }
         }
 
-        stage("Quality Gate"){
-            steps{
-                script{
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube'
-                }
-            }
-        }
+    //     stage("Quality Gate"){
+    //         steps{
+    //             script{
+    //                 waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube'
+    //             }
+    //         }
+    //     }
 
-        stage("Build Application"){
-            steps {
-                script{
-                    def branchName = "${GIT_BRANCH}".split('/').last()
+    //     stage("Build Application"){
+    //         steps {
+    //             script{
+    //                 def branchName = "${GIT_BRANCH}".split('/').last()
 
-                    if (branchName == 'main') {
-                        profile = 'prod'
-                    } else if (branchName == 'staging'){
-                        profile = 'stg'
-                    } else if (branchName == 'develop'){
-                        profile = 'dev'
-                    }
+    //                 if (branchName == 'main') {
+    //                     profile = 'prod'
+    //                 } else if (branchName == 'staging'){
+    //                     profile = 'stg'
+    //                 } else if (branchName == 'develop'){
+    //                     profile = 'dev'
+    //                 }
                     
-                    sh './mvnw -B dependency:go-offline'
-                    sh './mvnw -P${profile} package verify -DskipTests'
-                }
-            }
-        }
+    //                 sh './mvnw -B dependency:go-offline'
+    //                 sh './mvnw -P${profile} package verify -DskipTests'
+    //             }
+    //         }
+    //     }
 
-        stage("Run Custom Docker Daemon"){
-            steps {
-                sh 'sudo dockerd &'
-            }
-        }
+    //     stage("Run Custom Docker Daemon"){
+    //         steps {
+    //             sh 'sudo dockerd &'
+    //         }
+    //     }
 
-        stage("Build Image") {
-            steps{
-                sh 'docker build -t ${IMAGE_NAME}:${RELEASE} .'
-            }
-        }
+    //     stage("Build Image") {
+    //         steps{
+    //             sh 'docker build -t ${IMAGE_NAME}:${RELEASE} .'
+    //         }
+    //     }
 
-        stage("Trivy Scan") {
-           steps {
-                script {
-	                sh 'docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${IMAGE_NAME}:${RELEASE} --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table'
-               }
-           }
-        }
+    //     stage("Trivy Scan") {
+    //        steps {
+    //             script {
+	//                 sh 'docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${IMAGE_NAME}:${RELEASE} --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table'
+    //            }
+    //        }
+    //     }
 
-        stage("Build & Push Docker Image") {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'ociregistry', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    script{
+    //     stage("Build & Push Docker Image") {
+    //         steps {
+    //             withCredentials([usernamePassword(credentialsId: 'ociregistry', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+    //                 script{
 
-                        def branchName = "${GIT_BRANCH}".split('/').last()
+    //                     def branchName = "${GIT_BRANCH}".split('/').last()
                         
-                        if (branchName == 'main') {
-                            profile = 'prod'
-                        } else if (branchName == 'staging'){
-                            profile = 'stg'
-                        } else if (branchName == 'develop'){
-                            profile = 'dev'
-                        }
+    //                     if (branchName == 'main') {
+    //                         profile = 'prod'
+    //                     } else if (branchName == 'staging'){
+    //                         profile = 'stg'
+    //                     } else if (branchName == 'develop'){
+    //                         profile = 'dev'
+    //                     }
 
-                        sh '''
-                            echo \$PASS | docker login --username \$USER --password-stdin $ENDPOINT_REGISTRY
-                            docker tag $IMAGE_NAME:$RELEASE $IMAGE_NAME:$profile-$RELEASE
-                            docker push $IMAGE_NAME:$profile-$RELEASE
-                        '''
-                    }
-                }
-            }
-        }
+    //                     sh '''
+    //                         echo \$PASS | docker login --username \$USER --password-stdin $ENDPOINT_REGISTRY
+    //                         docker tag $IMAGE_NAME:$RELEASE $IMAGE_NAME:$profile-$RELEASE
+    //                         docker push $IMAGE_NAME:$profile-$RELEASE
+    //                     '''
+    //                 }
+    //             }
+    //         }
+    //     }
 
-       stage ("Cleanup Artifacts") {
-           steps {
-               script {
-                    sh 'docker rmi $(docker image ls -aq)'
-               }
-          }
-        }
+    //    stage ("Cleanup Artifacts") {
+    //        steps {
+    //            script {
+    //                 sh 'docker rmi $(docker image ls -aq)'
+    //            }
+    //       }
+    //     }
 
-        stage("Update Version for ArgoCD") {
-            steps {
-                script {
+    //     stage("Update Version for ArgoCD") {
+    //         steps {
+    //             script {
 
-                    def branchName = "${GIT_BRANCH}".split('/').last()
+    //                 def branchName = "${GIT_BRANCH}".split('/').last()
                         
-                    if (branchName == 'main') {
-                        profile = 'prod'
-                    } else if (branchName == 'staging'){
-                        profile = 'stg'
-                    } else if (branchName == 'develop'){
-                        profile = 'dev'
-                    }
+    //                 if (branchName == 'main') {
+    //                     profile = 'prod'
+    //                 } else if (branchName == 'staging'){
+    //                     profile = 'stg'
+    //                 } else if (branchName == 'develop'){
+    //                     profile = 'dev'
+    //                 }
 
-                    sh '''
-                        cat manifests/dev/deployment.yaml
-                        sed -i "s|$IMAGE_NAME:.*|$IMAGE_NAME:$profile-$RELEASE|g" manifests/dev/deployment.yaml
-                        cat manifests/dev/deployment.yaml
-                    '''
-                }
-            }
-        }
+    //                 sh '''
+    //                     cat manifests/dev/deployment.yaml
+    //                     sed -i "s|$IMAGE_NAME:.*|$IMAGE_NAME:$profile-$RELEASE|g" manifests/dev/deployment.yaml
+    //                     cat manifests/dev/deployment.yaml
+    //                 '''
+    //             }
+    //         }
+    //     }
 
-        stage('Update Deployment File') {
-            steps {
-                script {
-                    def branchName = "${GIT_BRANCH}".split('/').last()
-                    sh '''
-		    	        git config user.email "noc@certdox.io"
-                    	git config user.name "Jenkins Agent"
-                    	git add manifests/dev/deployment.yaml
-                    	git commit -m "Update to version $RELEASE"
-                    	git push https://$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$REPO_NAME HEAD:$BRANCH_NAME
-		            '''
-                }
-            }
-        }
+    //     stage('Update Deployment File') {
+    //         steps {
+    //             script {
+    //                 def branchName = "${GIT_BRANCH}".split('/').last()
+    //                 sh '''
+	// 	    	        git config user.email "noc@certdox.io"
+    //                 	git config user.name "Jenkins Agent"
+    //                 	git add manifests/dev/deployment.yaml
+    //                 	git commit -m "Update to version $RELEASE"
+    //                 	git push https://$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$REPO_NAME HEAD:$BRANCH_NAME
+	// 	            '''
+    //             }
+    //         }
+    //     }
 
     }
 }
