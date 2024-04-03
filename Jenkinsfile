@@ -33,22 +33,15 @@ pipeline{
         }
 
         stage("SonarQube Analysis"){
-            when { branch 'develop' }
+            //when { branch 'develop' }
             steps{
                 script{
-                    withSonarQubeEnv(credentialsId: 'sonarqube') {
-
-                        if (env.BRANCH_NAME == 'main') {
-                            def profile = 'prod'
-                        } else if (env.BRANCH_NAME == 'staging'){
-                            def profile = 'stg'
-                        } else if (env.BRANCH_NAME == 'develop'){
-                            def profile = 'dev'
+                    if(env.BRANCH_NAME == 'develop'){
+                        withSonarQubeEnv(credentialsId: 'sonarqube') {
+                            sh './mvnw -P${profile} clean verify -DskipTests sonar:sonar'
                         }
-
-                        sh 'echo $profile'
-
-                        sh './mvnw -P${profile} clean verify -DskipTests sonar:sonar'
+                    }else{
+                        sh 'echo ok'
                     }
                 }
             }
