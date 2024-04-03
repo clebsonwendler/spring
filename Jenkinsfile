@@ -37,13 +37,15 @@ pipeline{
                 script{
                     withSonarQubeEnv(credentialsId: 'sonarqube') {
 
-                        if (BRANCH_NAME == 'main') {
+                        if (env.BRANCH_NAME == 'main') {
                             profile = 'prod'
-                        } else if (BRANCH_NAME == 'staging'){
+                        } else if (env.BRANCH_NAME == 'staging'){
                             profile = 'stg'
-                        } else if (BRANCH_NAME == 'develop'){
+                        } else if (env.BRANCH_NAME == 'develop'){
                             profile = 'dev'
                         }
+
+                        sh 'echo $profile'
 
                         sh './mvnw -P${profile} clean verify -DskipTests sonar:sonar'
                     }
