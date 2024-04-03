@@ -40,8 +40,10 @@ pipeline{
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
                             sh './mvnw -P${profile} clean verify -DskipTests sonar:sonar'
                         }
-                    }else{
+                    }else if(env.BRANCH_NAME == 'develop'){
                         sh 'echo ok'
+                    }else{
+                        sh 'echo teste'
                     }
                 }
             }
