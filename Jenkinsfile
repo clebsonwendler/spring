@@ -37,11 +37,11 @@ pipeline{
                 script{
                     withSonarQubeEnv(credentialsId: 'sonarqube') {
 
-                        if ($BRANCH_NAME == 'main') {
+                        if (${BRANCH_NAME} == 'main') {
                             profile = 'prod'
-                        } else if ($BRANCH_NAME == 'staging'){
+                        } else if (${BRANCH_NAME} == 'staging'){
                             profile = 'stg'
-                        } else if ($BRANCH_NAME == 'develop'){
+                        } else if (${BRANCH_NAME} == 'develop'){
                             profile = 'dev'
                         }
 
