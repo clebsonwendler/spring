@@ -1,0 +1,275 @@
+<xs:schema xmlns:tns="http://webservices.portal.fidc.fromtis.com.br/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://webservices.portal.fidc.fromtis.com.br/">
+    <xs:element name="requisicao" type="tns:requisicao"/>
+    <xs:element name="requisicaoCertificado" type="tns:requisicaoCertificadoDigital"/>
+    <xs:element name="testemunha" type="tns:testemunha"/>
+    <xs:complexType name="requisicao">
+        <xs:sequence>
+            <xs:element name="requisicaoCertificado" type="tns:requisicaoCertificadoDigital" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="requisicaoCertificadoDigital">
+        <xs:sequence>
+            <xs:element name="operacao" type="tns:operacao"/>
+            <xs:element name="custodiante" type="tns:custodiante"/>
+            <xs:element name="fundo" type="tns:fundo"/>
+            <xs:element name="consultoria" type="tns:consultoria"/>
+            <xs:element name="cedente" type="tns:cedenteRequisicao"/>
+            <xs:element name="prorrogacaoVencimento" type="tns:prorrogacaoVencimento" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:int" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="operacao">
+        <xs:sequence>
+            <xs:element name="valorLiquido" type="xs:decimal"/>
+            <xs:element name="valorBruto" type="xs:decimal"/>
+            <xs:element name="comAdiantamento" type="xs:boolean"/>
+            <xs:element name="termoCessao" type="xs:string"/>
+            <xs:element name="valorRecompra" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="custodiante">
+        <xs:sequence>
+            <xs:element name="nomeCustodiante" type="xs:string"/>
+            <xs:element name="cnpjCustodiante" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="fundo">
+        <xs:sequence>
+            <xs:element name="cnpjFundo" type="xs:string"/>
+            <xs:element name="nomeFundo" type="xs:string"/>
+            <xs:element name="partes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="parte" type="tns:parte" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="testemunhas">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="testemunha" type="tns:testemunha" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="parte">
+        <xs:sequence>
+            <xs:element name="nome" type="xs:string" minOccurs="0"/>
+            <xs:element name="cpf" type="xs:string" minOccurs="0"/>
+            <xs:element name="email" type="xs:string" minOccurs="0"/>
+            <xs:element name="papel" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="tipo" type="tns:tipoAssinaturaEnum"/>
+    </xs:complexType>
+    <xs:complexType name="testemunha">
+        <xs:sequence>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="cpf" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="consultoria">
+        <xs:sequence>
+            <xs:element name="nomeConsultoria" type="xs:string"/>
+            <xs:element name="cnpjConsultoria" type="xs:string"/>
+            <xs:element name="partes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="parte" type="tns:parte" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="cedenteRequisicao">
+        <xs:sequence>
+            <xs:element name="cnpj" type="xs:string"/>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="banco" type="xs:string"/>
+            <xs:element name="agencia" type="xs:string"/>
+            <xs:element name="conta" type="xs:string"/>
+            <xs:element name="endereco" type="xs:string"/>
+            <xs:element name="numero" type="xs:string" minOccurs="0"/>
+            <xs:element name="complemento" type="xs:string" minOccurs="0"/>
+            <xs:element name="bairro" type="xs:string"/>
+            <xs:element name="cidade" type="xs:string"/>
+            <xs:element name="uf" type="xs:string"/>
+            <xs:element name="cep" type="xs:string"/>
+            <xs:element name="telefone" type="xs:string"/>
+            <xs:element name="inscricaoEstadual" type="xs:string"/>
+            <xs:element name="inscricaoMunicipal" type="xs:string"/>
+            <xs:element name="partes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="parte" type="tns:parteRepresentante" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="avalistas">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="avalista" type="tns:avalista" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="titulos">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="titulo" type="tns:tituloRequisicao" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="titulosRecompra">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="titulo" type="tns:tituloRequisicao" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="parteRepresentante">
+        <xs:sequence>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="cpf" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="papel" type="xs:string"/>
+            <xs:element name="assinaIsoladamente" type="xs:boolean"/>
+            <xs:element name="emiteDuplicata" type="xs:boolean"/>
+            <xs:element name="assinaPorEndosso" type="xs:boolean"/>
+            <xs:element name="assinaTermoCessao" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="avalista">
+        <xs:sequence>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="cpf" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="papel" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="tituloRequisicao">
+        <xs:sequence>
+            <xs:element name="numero" type="xs:string"/>
+            <xs:element name="numeroControleParticipante" type="xs:string"/>
+            <xs:element name="dataDeEmissaoDuplicata" type="xs:dateTime"/>
+            <xs:element name="dataDeVencimentoDuplicata" type="xs:dateTime"/>
+            <xs:element name="valorBruto" type="xs:decimal"/>
+            <xs:element name="valorLiquido" type="xs:decimal"/>
+            <xs:element name="numeroDaNotaFiscal" type="xs:string"/>
+            <xs:element name="serieDaNotaFiscal" type="xs:string" minOccurs="0"/>
+            <xs:element name="nomePkcs7" type="xs:string" minOccurs="0"/>
+            <xs:element name="chaveNfe" type="xs:string" minOccurs="0"/>
+            <xs:element name="sacado" type="tns:sacado"/>
+            <xs:element name="comCoobrigacao" type="xs:boolean"/>
+            <xs:element name="dataVencimentoOriginal" type="xs:dateTime" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="tipo" type="tns:tipoTituloEnum" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="sacado">
+        <xs:sequence>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="cpf" type="xs:string"/>
+            <xs:element name="endereco" type="xs:string"/>
+            <xs:element name="numero" type="xs:string" nillable="true"/>
+            <xs:element name="complemento" type="xs:string" nillable="true"/>
+            <xs:element name="email" type="xs:string" minOccurs="0"/>
+            <xs:element name="tipo" type="tns:tipoPessoaEnum"/>
+            <xs:element name="bairro" type="xs:string" minOccurs="0"/>
+            <xs:element name="cidade" type="xs:string" minOccurs="0"/>
+            <xs:element name="UF" type="xs:string" minOccurs="0"/>
+            <xs:element name="CEP" type="xs:string" minOccurs="0"/>
+            <xs:element name="pais" type="xs:string" minOccurs="0"/>
+            <xs:element name="partes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="parte" type="tns:parteRepresentante" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="prorrogacaoVencimento">
+        <xs:sequence>
+            <xs:element name="gestor" type="tns:gestor" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="gestor">
+        <xs:sequence>
+            <xs:element name="nome" type="xs:string" minOccurs="0"/>
+            <xs:element name="cnpj" type="xs:string" minOccurs="0"/>
+            <xs:element name="partes" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="parte" type="tns:parte" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="tipoAssinaturaEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Individual"/>
+            <xs:enumeration value="Conjunto"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="tipoPessoaEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CPF"/>
+            <xs:enumeration value="CNPJ"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="tipoTituloEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Duplicata"/>
+            <xs:enumeration value="Cheque"/>
+            <xs:enumeration value="Contrato"/>
+            <xs:enumeration value="Contrato Fisico"/>
+            <xs:enumeration value="Duplicata de Servico"/>
+            <xs:enumeration value="Duplicata de Servico Fisico"/>
+            <xs:enumeration value="Nota Promissoria"/>
+            <xs:enumeration value="Nota Promissoria Fisica"/>
+            <xs:enumeration value="Duplicata de Transporte Digital CTE"/>
+            <xs:enumeration value="Duplicata de Transporte Fisica CTE"/>
+            <xs:enumeration value="FATURA DE CARTAO DE CREDITO"/>
+            <xs:enumeration value="CDC Outros Bens"/>
+            <xs:enumeration value="Consignado"/>
+            <xs:enumeration value="Credito Pessoal"/>
+            <xs:enumeration value="Veiculo"/>
+            <xs:enumeration value="CCB Digital"/>
+            <xs:enumeration value="Fatura de Cartao de Credito Digital"/>
+            <xs:enumeration value="CCB PRE FISICO"/>
+            <xs:enumeration value="CCB PRE BALCAO"/>
+            <xs:enumeration value="CCB PRE CETIPADA"/>
+            <xs:enumeration value="CCB PRE DIGITAL"/>
+            <xs:enumeration value="Operacao Cartao de Credito DIGITAL"/>
+            <xs:enumeration value="Operacao Cartao de Credito"/>
+            <xs:enumeration value="CCB PMT PL"/>
+            <xs:enumeration value="CCB FINAL PL"/>
+            <xs:enumeration value="CCB PMT MatCon"/>
+            <xs:enumeration value="CCB FINAL MatCon"/>
+            <xs:enumeration value="CCB PMT MAIS / CO BRANDED"/>
+            <xs:enumeration value="CCB FINAL MAIS / CO BRANDED"/>
+            <xs:enumeration value="CCB - FORMALIZACAO FONADA"/>
+            <xs:enumeration value="Unidades de recebivel"/>
+            <xs:enumeration value="Letras de Cambio"/>
+            <xs:enumeration value="CCB POS"/>
+            <xs:enumeration value="CCB – Direito Creditorio FGTS"/>
+            <xs:enumeration value="Cotas de Condominio"/>
+            <xs:enumeration value="Cotas de Consorcio"/>
+            <xs:enumeration value="CPR - Cedula de Produto Rural"/>
+            <xs:enumeration value="Contratos - Cofre"/>
+            <xs:enumeration value="Duplicata Endossada"/>
+            <xs:enumeration value="CTE"/>
+            <xs:enumeration value="Nota Comercial"/>
+            <xs:enumeration value="Duplicata - Nota Fiscal de Consumo"/>
+            <xs:enumeration value="CTE Digital"/>
+            <xs:enumeration value="CTE Físico"/>
+            <xs:enumeration value="Ações Judiciais"/>
+            <xs:enumeration value="Precatórios"/>
+            <xs:enumeration value="Contratos – Show"/>
+            <xs:enumeration value="Outros"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
