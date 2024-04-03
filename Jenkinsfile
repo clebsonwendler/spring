@@ -36,22 +36,12 @@ pipeline{
             steps{
                 script{
                     withSonarQubeEnv(credentialsId: 'sonarqube') {
-                        def branchName = "${GIT_BRANCH}".split('/').last()
 
-                        sh '''
-                            echo ${branchName}
-                            echo branchName
-                            echo $branchName
-                            echo $BRANCH_NAME
-                            echo BRANCH_NAME
-                            echo ${BRANCH_NAME}
-                        '''
-
-                        if (branchName == 'main') {
+                        if ($BRANCH_NAME == 'main') {
                             profile = 'prod'
-                        } else if (branchName == 'staging'){
+                        } else if ($BRANCH_NAME == 'staging'){
                             profile = 'stg'
-                        } else if (branchName == 'develop'){
+                        } else if ($BRANCH_NAME == 'develop'){
                             profile = 'dev'
                         }
 
