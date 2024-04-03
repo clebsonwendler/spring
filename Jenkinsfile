@@ -33,7 +33,7 @@ pipeline{
         }
 
         stage("SonarQube Analysis"){
-            when { branch 'master' }
+            when { branch 'develop' }
             steps{
                 script{
                     withSonarQubeEnv(credentialsId: 'sonarqube') {
