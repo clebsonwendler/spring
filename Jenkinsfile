@@ -13,7 +13,8 @@ pipeline{
         IMAGE_NAME = "${ENDPOINT_REGISTRY}" + "/" + "${TENANCY_NAMESPACE}" + "/" + "${APP_NAME}"
         GITHUB_TOKEN = credentials('github_token_clebson')
         BRANCH_NAME = "${GIT_BRANCH}".split('/').last()
-        gitUrl = "${GIT_URL}".split('/').last()
+        REPOSITORY_NAME = "${env.GIT_URL.tokenize('/')[3].split('\\.')[0]}"
+        REPOSITORY_OWNER = "${env.GIT_URL.tokenize('/')[2]}"
     }
     stages{
         stage("Cleanup Workspace"){
@@ -42,7 +43,8 @@ pipeline{
                         sh '''
                             echo SUCESSO develop!
                             env
-                            echo $gitUrl
+                            echo $REPOSITORY_NAME
+                            echo $REPOSITORY_OWNER
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
