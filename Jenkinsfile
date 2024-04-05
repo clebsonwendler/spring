@@ -36,12 +36,12 @@ pipeline{
                 script{
                     if(env.BRANCH_NAME == 'main'){
                         sh '''
-                            la -lah
                             ./mvnw -B dependency:go-offline
                             ./mvnw -Pprod package verify -DskipTests -Dspring.profiles.active=prod
                         '''
                     }else if(env.BRANCH_NAME == 'develop'){
                         sh '''
+                            la -lah
                             ./mvnw -B dependency:go-offline
                             ./mvnw -Pdev package verify -DskipTests -Dspring.profiles.active=dev
                         '''
