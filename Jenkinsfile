@@ -43,7 +43,7 @@ pipeline{
                         '''
                     }else if(env.BRANCH_NAME == 'develop'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh './mvnw -Pdev sonar:sonar -Dsonar.projectName="Nome Personalizado do Projeto"'
+                            sh './mvnw -Pdev sonar:sonar -Dsonar.projectName="nome-teste"'
                         }
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
