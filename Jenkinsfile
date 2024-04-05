@@ -40,7 +40,7 @@ pipeline{
                         }
                     }else if(env.BRANCH_NAME == 'develop'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh 'chmod +x mvnw && ./mvnw -Pdev sonar:sonar -Dsonar.projectName="novo-nome" -Dsonar.java.binaries=target/classes'
+                            sh 'chmod +x mvnw && ./mvnw -Pdev sonar:sonar -Dsonar.projectName="novo-nome" -Dsonar.exclusions=**/*.java'
                         }
                     }else if(env.BRANCH_NAME == 'staging'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
