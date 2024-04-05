@@ -40,7 +40,11 @@ pipeline{
                         }
                     }else if(env.BRANCH_NAME == 'develop'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh 'chmod +x mvnw && ./mvnw -Pdev sonar:sonar -Dsonar.projectName="novo-nome" -Dsonar.exclusions=**/*.java'
+                            sh '''
+                                chmod +x mvnw
+                                ./mvnw -Pdev clean package verify -DskipTests -Dspring.profiles.active=dev
+                                ./mvnw -Pdev sonar:sonar -Dsonar.projectName="$REPOSITORY_NAME ($BRANCH_NAME)" -Dsonar.java.binaries=target/classes
+                            '''
                         }
                     }else if(env.BRANCH_NAME == 'staging'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
