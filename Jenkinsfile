@@ -25,7 +25,7 @@ pipeline{
             steps {
                 script{
                     def branchName = "${GIT_BRANCH}".split('/').last()
-                    git branch: "${branchName}", credentialsId: "github", url: "https://github.com/${GITHUB_USERNAME}/${REPO_NAME}"
+                    git branch: "${branchName}", credentialsId: "github", url: "${GIT_URL}"
                 }
             }
         }
@@ -33,6 +33,13 @@ pipeline{
         stage("SonarQube Analysis"){
             steps{
                 script{
+                    def gitUrl = env.GIT_URL
+                    // Extrair o nome de usuário
+                    def username = gitUrl.tokenize('/')[3]
+
+                    // Extrair o nome do repositório
+                    def repository = gitUrl.tokenize('/')[4]
+
                     if(env.BRANCH_NAME == 'main'){
                         sh '''
                             echo SUCESSO main!
@@ -42,6 +49,9 @@ pipeline{
                         sh '''
                             echo SUCESSO develop!
                             env
+                            
+                            echo $username
+                            echo $repository
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
@@ -69,6 +79,7 @@ pipeline{
                 }
             }
         }
+        // Mantenha o nome Jenkins Agent para que ocorra a validação no envio do webhook pelo github
 
 
     }
