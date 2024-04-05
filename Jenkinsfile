@@ -32,7 +32,7 @@ pipeline{
         stage("SonarQube Analysis"){
             steps{
                 script{
-                    def gitUrl = env.GIT_URL
+                    def gitUrl = "testesss"
                     // Extrair o nome de usuário
                     def username = gitUrl.tokenize('/')[3]
 
@@ -49,9 +49,6 @@ pipeline{
                             echo SUCESSO develop!
                             env
                             echo "${gitUrl}"
-
-                            def teste = env.GIT_URL
-                            echo "${teste}"
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
