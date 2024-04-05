@@ -58,7 +58,7 @@ pipeline{
                 script {
                     sh '''
                         cat index.html
-                        sed -i "s|Hello-:.*|Hello-:$BUILD_NUMBER|g" index.html
+                        sed -i "s|Hello:.*|Hello:$BUILD_NUMBER|g" index.html
                         cat index.html
                         git config user.email "noc@certdox.io"
                         git config user.name "Jenkins Agent"
