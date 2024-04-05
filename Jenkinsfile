@@ -43,7 +43,7 @@ pipeline{
                             sh '''
                                 chmod +x mvnw
                                 ./mvnw -Pdev clean package verify -DskipTests -Dspring.profiles.active=dev
-                                ./mvnw -Pdev sonar:sonar -Dsonar.projectName="$REPOSITORY_NAME ($BRANCH_NAME)" -Dsonar.exclusions=**/*.java
+                                ./mvnw -Pdev sonar:sonar -Dsonar.projectName="$REPOSITORY_NAME ($BRANCH_NAME)" -Dsonar.java.binaries=target/classes
                             '''
                         }
                     }else if(env.BRANCH_NAME == 'staging'){
@@ -60,6 +60,12 @@ pipeline{
                 script{
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube'
                 }
+            }
+        }
+
+        stage("Final"){
+            steps{
+                sh 'echo SUCESSO!'
             }
         }
 
