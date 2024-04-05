@@ -37,5 +37,63 @@ pipeline{
             }
         }
 
+        stage("Update Version for ArgoCD") {
+            steps {
+                script {
+                    if(env.BRANCH_NAME == 'main'){
+                        sh '''
+                            cat manifests/prod/deployment.yaml
+                            sed -i "s|$IMAGE_NAME:.*|$IMAGE_NAME:$BRANCH_NAME-$RELEASE|g" manifests/prod/deployment.yaml
+                            cat manifests/prod/deployment.yaml
+                        '''
+                    }else if(env.BRANCH_NAME == 'develop'){
+                        sh '''
+                            cat manifests/dev/deployment.yaml
+                            sed -i "s|$IMAGE_NAME:.*|$IMAGE_NAME:$BRANCH_NAME-$RELEASE|g" manifests/dev/deployment.yaml
+                            cat manifests/dev/deployment.yaml
+                        '''
+                    }else if(env.BRANCH_NAME == 'staging'){
+                        sh '''
+                            cat manifests/stg/deployment.yaml
+                            sed -i "s|$IMAGE_NAME:.*|$IMAGE_NAME:$BRANCH_NAME-$RELEASE|g" manifests/stg/deployment.yaml
+                            cat manifests/stg/deployment.yaml
+                        '''
+                    }
+                }
+            }
+        }
+
+        // stage('Update Deployment File') {
+        //     steps {
+        //         script {
+        //             if(env.BRANCH_NAME == 'main'){
+        //                 sh '''
+        //                     git config user.email "noc@certdox.io"
+        //                     git config user.name "Jenkins Agent"
+        //                     git add manifests/prod/deployment.yaml
+        //                     git commit -m "Update to version $RELEASE"
+        //                     git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
+        //                 '''
+        //             }else if(env.BRANCH_NAME == 'develop'){
+        //                 sh '''
+        //                     git config user.email "noc@certdox.io"
+        //                     git config user.name "Jenkins Agent"
+        //                     git add manifests/dev/deployment.yaml
+        //                     git commit -m "Update to version $RELEASE"
+        //                     git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
+        //                 '''
+        //             }else if(env.BRANCH_NAME == 'staging'){
+        //                 sh '''
+        //                     git config user.email "noc@certdox.io"
+        //                     git config user.name "Jenkins Agent"
+        //                     git add manifests/stg/deployment.yaml
+        //                     git commit -m "Update to version $RELEASE"
+        //                     git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
+
     }
 }
