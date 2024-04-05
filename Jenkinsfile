@@ -25,7 +25,7 @@ pipeline{
             steps {
                 script{
                     def branchName = "${GIT_BRANCH}".split('/').last()
-                    git branch: "${branchName}", credentialsId: "github", url: "${GIT_URL}"
+                    git branch: "${BRANCH_NAME}", credentialsId: "github", url: "${GIT_URL}"
                 }
             }
         }
@@ -36,6 +36,7 @@ pipeline{
                     def gitUrl = "${GIT_URL}"
                     // Extrair o nome de usuário
                     def username = gitUrl.tokenize('/')[3]
+                    println gitUrl
 
                     // Extrair o nome do repositório
                     def repository = gitUrl.tokenize('/')[4]
@@ -63,22 +64,22 @@ pipeline{
             }
         }
 
-        stage('Update Deployment File') {
-            steps {
-                script {
-                    sh '''
-                        cat index.html
-                        sed -i "s|Hello.*|Hello-$BUILD_NUMBER|g" index.html
-                        cat index.html
-                        git config user.email "noc@certdox.io"
-                        git config user.name "Jenkins Agent"
-                        git add index.html
-                        git commit -m "Update to version $RELEASE"
-                        git push https://$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$REPO_NAME HEAD:$BRANCH_NAME
-                    '''
-                }
-            }
-        }
+        // stage('Update Deployment File') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 cat index.html
+        //                 sed -i "s|Hello.*|Hello-$BUILD_NUMBER|g" index.html
+        //                 cat index.html
+        //                 git config user.email "noc@certdox.io"
+        //                 git config user.name "Jenkins Agent"
+        //                 git add index.html
+        //                 git commit -m "Update to version $RELEASE"
+        //                 git push https://$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$REPO_NAME HEAD:$BRANCH_NAME
+        //             '''
+        //         }
+        //     }
+        // }
         // Mantenha o nome Jenkins Agent para que ocorra a validação no envio do webhook pelo github
 
 
