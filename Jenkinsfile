@@ -13,7 +13,7 @@ pipeline{
         IMAGE_NAME = "${ENDPOINT_REGISTRY}" + "/" + "${TENANCY_NAMESPACE}" + "/" + "${APP_NAME}"
         GITHUB_TOKEN = credentials('github_token_clebson')
         BRANCH_NAME = "${GIT_BRANCH}".split('/').last()
-        gitUrl = env.GIT_URL.tokenize('/')[3]
+        gitUrl = "${GIT_URL}".split('/').last()
     }
     stages{
         stage("Cleanup Workspace"){
