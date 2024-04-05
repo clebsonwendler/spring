@@ -11,7 +11,7 @@ pipeline{
 	    APP_NAME = "${JOB_NAME}"
         RELEASE = "v${BUILD_NUMBER}"
         IMAGE_NAME = "${ENDPOINT_REGISTRY}" + "/" + "${TENANCY_NAMESPACE}" + "/" + "${APP_NAME}"
-        GITHUB_TOKEN = credentials('github_token')
+        GITHUB_TOKEN = credentials('github_token_clebson')
         BRANCH_NAME = "${GIT_BRANCH}".split('/').last()
     }
     stages{
