@@ -13,6 +13,7 @@ pipeline{
         IMAGE_NAME = "${ENDPOINT_REGISTRY}" + "/" + "${TENANCY_NAMESPACE}" + "/" + "${APP_NAME}"
         GITHUB_TOKEN = credentials('github_token_clebson')
         BRANCH_NAME = "${GIT_BRANCH}".split('/').last()
+        gitUrl = "${GIT_URL}".tokenize('/')[3]
     }
     stages{
         stage("Cleanup Workspace"){
@@ -32,13 +33,6 @@ pipeline{
         stage("SonarQube Analysis"){
             steps{
                 script{
-                    def gitUrl = "testesss"
-                    // Extrair o nome de usuário
-                    def username = gitUrl.tokenize('/')[3]
-
-                    // Extrair o nome do repositório
-                    def repository = gitUrl.tokenize('/')[4]
-
                     if(env.BRANCH_NAME == 'main'){
                         sh '''
                             echo SUCESSO main!
@@ -48,7 +42,7 @@ pipeline{
                         sh '''
                             echo SUCESSO develop!
                             env
-                            echo "${gitUrl}"
+                            echo $gitUrl
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
