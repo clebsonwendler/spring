@@ -31,31 +31,6 @@ pipeline{
             }
         }
 
-        stage("Build Application"){
-            steps {
-                script{
-                    if(env.BRANCH_NAME == 'main'){
-                        sh '''
-                            ./mvnw -B dependency:go-offline
-                            ./mvnw -Pprod package verify -DskipTests -Dspring.profiles.active=prod
-                        '''
-                    }else if(env.BRANCH_NAME == 'develop'){
-                        sh '''
-                            chmod +x mvnw
-                            ./mvnw -B dependency:go-offline
-                            ./mvnw -Pdev package verify -DskipTests -Dspring.profiles.active=dev
-                        '''
-                    }else if(env.BRANCH_NAME == 'staging'){
-                        sh '''
-                            ./mvnw -B dependency:go-offline
-                            ./mvnw -Pstg package verify -DskipTests -Dspring.profiles.active=stg
-                        '''
-                    }
-                    
-                }
-            }
-        }
-
         stage("SonarQube Analysis"){
             steps{
                 script{
@@ -65,7 +40,7 @@ pipeline{
                         }
                     }else if(env.BRANCH_NAME == 'develop'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh './mvnw -Pdev sonar:sonar'
+                            sh 'chmod +x mvnw && ./mvnw -Pdev sonar:sonar -Dsonar.projectName="novo-nome"'
                         }
                     }else if(env.BRANCH_NAME == 'staging'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
