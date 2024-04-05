@@ -1,5 +1,5 @@
-// Definir os parâmetros para execução nas configurações da pipeline
-// TENANCY_NAMESPACE, ENDPOINT_REGISTRY, GITHUB_USERNAME, REPO_NAME
+// Definir os seguintes parâmetros de execução nas configurações
+// da pipeline: TENANCY_NAMESPACE, ENDPOINT_REGISTRY
 
 pipeline{
     agent any
@@ -11,7 +11,7 @@ pipeline{
 	    APP_NAME = "${JOB_NAME}"
         RELEASE = "v${BUILD_NUMBER}"
         IMAGE_NAME = "${ENDPOINT_REGISTRY}" + "/" + "${TENANCY_NAMESPACE}" + "/" + "${APP_NAME}"
-        GITHUB_TOKEN = credentials('github_token_clebson')
+        GITHUB_TOKEN = credentials('github_token')
         BRANCH_NAME = "${GIT_BRANCH}".split('/').last()
         REPOSITORY_NAME = "${env.GIT_URL.tokenize('/')[3].split('\\.')[0]}"
         REPOSITORY_OWNER = "${env.GIT_URL.tokenize('/')[2]}"
@@ -31,48 +31,57 @@ pipeline{
             }
         }
 
+        stage("Build Application"){
+            steps {
+                script{
+                    if(env.BRANCH_NAME == 'main'){
+                        sh '''
+                            ./mvnw -B dependency:go-offline
+                            ./mvnw -Pprod package verify -DskipTests -Dspring.profiles.active=prod
+                        '''
+                    }else if(env.BRANCH_NAME == 'develop'){
+                        sh '''
+                            ./mvnw -B dependency:go-offline
+                            ./mvnw -Pdev package verify -DskipTests -Dspring.profiles.active=dev
+                        '''
+                    }else if(env.BRANCH_NAME == 'staging'){
+                        sh '''
+                            ./mvnw -B dependency:go-offline
+                            ./mvnw -Pstg package verify -DskipTests -Dspring.profiles.active=stg
+                        '''
+                    }
+                    
+                }
+            }
+        }
+
         stage("SonarQube Analysis"){
             steps{
                 script{
                     if(env.BRANCH_NAME == 'main'){
-                        sh '''
-                            echo SUCESSO develop!
-                            env
-                            echo $REPOSITORY_NAME
-                            echo $REPOSITORY_OWNER
-                        '''
+                        withSonarQubeEnv(credentialsId: 'sonarqube') {
+                            sh './mvnw -Pprod sonar:sonar'
+                        }
                     }else if(env.BRANCH_NAME == 'develop'){
                         withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh './mvnw -Pdev sonar:sonar -Dsonar.projectName="nome-teste"'
+                            sh './mvnw -Pdev sonar:sonar'
                         }
                     }else if(env.BRANCH_NAME == 'staging'){
-                        sh '''
-                            echo SUCESSO staging!
-                            env
-                        '''
+                        withSonarQubeEnv(credentialsId: 'sonarqube') {
+                            sh './mvnw -Pstg sonar:sonar'
+                        }
                     }
                 }
             }
         }
 
-        // stage('Update Deployment File') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 cat index.html
-        //                 sed -i "s|Hello.*|Hello-$BUILD_NUMBER|g" index.html
-        //                 cat index.html
-        //                 git config user.email "noc@certdox.io"
-        //                 git config user.name "Jenkins Agent"
-        //                 git add index.html
-        //                 git commit -m "Update to version $RELEASE"
-        //                 git push https://$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$REPO_NAME HEAD:$BRANCH_NAME
-        //             '''
-        //         }
-        //     }
-        // }
-        // Mantenha o nome Jenkins Agent para que ocorra a validação no envio do webhook pelo github
-
+        stage("Quality Gate"){
+            steps{
+                script{
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube'
+                }
+            }
+        }
 
     }
 }
