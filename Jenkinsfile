@@ -48,11 +48,10 @@ pipeline{
                         sh '''
                             echo SUCESSO develop!
                             env
-                            
-                            echo ${GIT_URL}
-                            echo $GIT_URL
-                            echo $gitUrl
-                            echo ${gitUrl}
+                            echo "${gitUrl}"
+
+                            def teste = env.GIT_URL
+                            echo "${teste}"
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
