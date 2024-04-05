@@ -11,7 +11,7 @@ pipeline{
 	    APP_NAME = "${JOB_NAME}"
         RELEASE = "v${BUILD_NUMBER}"
         IMAGE_NAME = "${ENDPOINT_REGISTRY}" + "/" + "${TENANCY_NAMESPACE}" + "/" + "${APP_NAME}"
-        GITHUB_TOKEN = credentials('github_token')
+        GITHUB_TOKEN = credentials('github_token_clebson')
         BRANCH_NAME = "${GIT_BRANCH}".split('/').last()
         REPOSITORY_NAME = "${env.GIT_URL.tokenize('/')[3].split('\\.')[0]}"
         REPOSITORY_OWNER = "${env.GIT_URL.tokenize('/')[2]}"
@@ -26,7 +26,7 @@ pipeline{
         stage("Checkout Application"){
             steps {
                 script{
-                    git branch: "${BRANCH_NAME}", credentialsId: "github", url: "${GIT_URL}"
+                    git branch: "${BRANCH_NAME}", url: "${GIT_URL}"
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline{
                         '''
                     }else if(env.BRANCH_NAME == 'develop'){
                         sh '''
-                            sudo ./mvnw -B dependency:go-offline
+                            ./mvnw -B dependency:go-offline
                             ./mvnw -Pdev package verify -DskipTests -Dspring.profiles.active=dev
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
