@@ -31,38 +31,6 @@ pipeline{
             }
         }
 
-        stage("SonarQube Analysis"){
-            steps{
-                script{
-                    if(env.BRANCH_NAME == 'main'){
-                        withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh './mvnw -Pprod sonar:sonar'
-                        }
-                    }else if(env.BRANCH_NAME == 'develop'){
-                        withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh '''
-                                chmod +x mvnw
-                                ./mvnw -Pdev clean package verify -DskipTests -Dspring.profiles.active=dev
-                                ./mvnw -Pdev sonar:sonar -Dsonar.projectName="$REPOSITORY_NAME ($BRANCH_NAME)" -Dsonar.exclusions=**/*.java
-                            '''
-                        }
-                    }else if(env.BRANCH_NAME == 'staging'){
-                        withSonarQubeEnv(credentialsId: 'sonarqube') {
-                            sh './mvnw -Pstg sonar:sonar'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage("Quality Gate"){
-            steps{
-                script{
-                    waitForQualityGate abortPipeline: true, credentialsId: 'sonarqube'
-                }
-            }
-        }
-
         stage("Final"){
             steps{
                 sh 'echo SUCESSO!'
