@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fromtisws
+  labels:
+    app: fromtisws
+  namespace: apps
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fromtisws
+  template:
+    metadata:
+      labels:
+        app: fromtisws
+    spec:
+      containers:
+      - name: fromtisws
+        image: gru.ocir.io/greggn67nu05/fromtisws:develop-v42
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "dev"
+      imagePullSecrets:
+        - name: ocirsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fromtisws-service
+  labels:
+    app: fromtisws
+  namespace: apps
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  type: LoadBalancer
+  selector:
+    app: fromtisws
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

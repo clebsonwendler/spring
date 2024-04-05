@@ -36,16 +36,15 @@ pipeline{
                 script{
                     if(env.BRANCH_NAME == 'main'){
                         sh '''
-                            echo SUCESSO main!
-                            env
-                        '''
-                    }else if(env.BRANCH_NAME == 'develop'){
-                        sh '''
                             echo SUCESSO develop!
                             env
                             echo $REPOSITORY_NAME
                             echo $REPOSITORY_OWNER
                         '''
+                    }else if(env.BRANCH_NAME == 'develop'){
+                        withSonarQubeEnv(credentialsId: 'sonarqube') {
+                            sh './mvnw -Pdev sonar:sonar -Dsonar.projectName="Nome Personalizado do Projeto"'
+                        }
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
                             echo SUCESSO staging!
