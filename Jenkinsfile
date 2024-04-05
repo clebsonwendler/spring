@@ -24,7 +24,6 @@ pipeline{
         stage("Checkout Application"){
             steps {
                 script{
-                    def branchName = "${GIT_BRANCH}".split('/').last()
                     git branch: "${BRANCH_NAME}", credentialsId: "github", url: "${GIT_URL}"
                 }
             }
@@ -36,7 +35,6 @@ pipeline{
                     def gitUrl = "${GIT_URL}"
                     // Extrair o nome de usuário
                     def username = gitUrl.tokenize('/')[3]
-                    println gitUrl
 
                     // Extrair o nome do repositório
                     def repository = gitUrl.tokenize('/')[4]
@@ -51,8 +49,9 @@ pipeline{
                             echo SUCESSO develop!
                             env
                             
-                            echo ${username}
-                            echo ${repository}
+                            echo ${gitUrl}
+                            echo $gitUrl
+                            echo gitUrl
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
                         sh '''
