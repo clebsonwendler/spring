@@ -41,7 +41,7 @@ pipeline{
                         '''
                     }else if(env.BRANCH_NAME == 'develop'){
                         sh '''
-                            ls -lah
+                            chmod +x mvnw
                             ./mvnw -B dependency:go-offline
                             ./mvnw -Pdev package verify -DskipTests -Dspring.profiles.active=dev
                         '''
