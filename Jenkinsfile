@@ -51,7 +51,7 @@ pipeline{
                     }else if(env.BRANCH_NAME == 'develop'){
                         sh '''
                             cat manifests/dev/deployment.yaml
-                            sed -i "s|$IMAGE_NAME:.*|$IMAGE_NAME:$BRANCH_NAME-$RELEASE|g" manifests/dev/deployment.yaml
+                            sed -i "s|novabuild:develop-.*|novabuild:develop-$RELEASE|g" manifests/dev/deployment.yaml
                             cat manifests/dev/deployment.yaml
                         '''
                     }else if(env.BRANCH_NAME == 'staging'){
