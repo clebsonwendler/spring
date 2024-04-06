@@ -33,7 +33,10 @@ pipeline{
 
         stage("Final"){
             steps{
-                sh 'env'
+                sh '''
+                    env
+                    echo ${env.STATE}
+                '''
             }
         }
 
