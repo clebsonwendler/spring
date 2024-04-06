@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: fromtisws
-        image: gru.ocir.io/greggn67nu05/novabuild:develop-v33
+        image: gru.ocir.io/greggn67nu05/novabuild:develop-v35
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
