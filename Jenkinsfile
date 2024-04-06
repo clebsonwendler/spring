@@ -31,9 +31,13 @@ pipeline{
             }
         }
 
-        stage("Final"){
-            steps{
-                sh 'echo SUCESSO!'
+         stages {
+            stage('Print Value') {
+                steps {
+                    script {
+                        println "Valor de $.commit.author.name: ${params.payload}"
+                    }
+                }
             }
         }
 
