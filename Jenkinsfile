@@ -35,7 +35,7 @@ pipeline{
             steps{
                 sh '''
                     env
-                    echo ${env.STATE}
+                    echo $STATE
                 '''
             }
         }
