@@ -31,15 +31,13 @@ pipeline{
             }
         }
 
-         stages {
-            stage('Print Value') {
-                steps {
-                    script {
-                        sh'''
-                            echo ${params.payload}
-                            env
-                        '''
-                    }
+        stage('Print Value') {
+            steps {
+                script {
+                    sh'''
+                        echo ${params.payload}
+                        env
+                    '''
                 }
             }
         }
