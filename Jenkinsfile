@@ -34,7 +34,7 @@ pipeline{
         stage('Print Value') {
             steps {
                 script {
-                    sh'''
+                    sh '''
                         echo ${params.payload}
                         env
                     '''
