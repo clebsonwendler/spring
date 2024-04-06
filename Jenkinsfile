@@ -31,14 +31,9 @@ pipeline{
             }
         }
 
-        stage('Print Value') {
-            steps {
-                script {
-                    sh '''
-                        echo ${params.payload}
-                        env
-                    '''
-                }
+        stage("Final"){
+            steps{
+                sh 'env'
             }
         }
 
