@@ -35,7 +35,10 @@ pipeline{
             stage('Print Value') {
                 steps {
                     script {
-                        println "Valor de $.commit.author.name: ${params.payload}"
+                        sh'''
+                            echo ${params.payload}
+                            env
+                        '''
                     }
                 }
             }
