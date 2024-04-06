@@ -35,7 +35,6 @@ pipeline{
             steps{
                 sh '''
                     env
-                    echo $params.payload
                 '''
             }
         }
@@ -66,37 +65,37 @@ pipeline{
             }
         }
 
-        // stage('Update Deployment File') {
-        //     steps {
-        //         script {
-        //             if(env.BRANCH_NAME == 'main'){
-        //                 sh '''
-        //                     git config user.email "noc@certdox.io"
-        //                     git config user.name "Jenkins Agent"
-        //                     git add manifests/prod/deployment.yaml
-        //                     git commit -m "Update to version $RELEASE"
-        //                     git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
-        //                 '''
-        //             }else if(env.BRANCH_NAME == 'develop'){
-        //                 sh '''
-        //                     git config user.email "noc@certdox.io"
-        //                     git config user.name "Jenkins Agent"
-        //                     git add manifests/dev/deployment.yaml
-        //                     git commit -m "Update to version $RELEASE"
-        //                     git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
-        //                 '''
-        //             }else if(env.BRANCH_NAME == 'staging'){
-        //                 sh '''
-        //                     git config user.email "noc@certdox.io"
-        //                     git config user.name "Jenkins Agent"
-        //                     git add manifests/stg/deployment.yaml
-        //                     git commit -m "Update to version $RELEASE"
-        //                     git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Update Deployment File') {
+            steps {
+                script {
+                    if(env.BRANCH_NAME == 'main'){
+                        sh '''
+                            git config user.email "noc@certdox.io"
+                            git config user.name "Jenkins Agent"
+                            git add manifests/prod/deployment.yaml
+                            git commit -m "Update to version $RELEASE"
+                            git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
+                        '''
+                    }else if(env.BRANCH_NAME == 'develop'){
+                        sh '''
+                            git config user.email "noc@certdox.io"
+                            git config user.name "Jenkins Agent"
+                            git add manifests/dev/deployment.yaml
+                            git commit -m "Update to version $RELEASE"
+                            git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
+                        '''
+                    }else if(env.BRANCH_NAME == 'staging'){
+                        sh '''
+                            git config user.email "noc@certdox.io"
+                            git config user.name "Jenkins Agent"
+                            git add manifests/stg/deployment.yaml
+                            git commit -m "Update to version $RELEASE"
+                            git push https://$GITHUB_TOKEN@github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME HEAD:$BRANCH_NAME
+                        '''
+                    }
+                }
+            }
+        }
 
     }
 }
