@@ -1,6 +1,6 @@
 // Definir os seguintes parâmetros de execução nas configurações
 // da pipeline: TENANCY_NAMESPACE, ENDPOINT_REGISTRY
-///
+////
 pipeline{
     agent any
     tools{
